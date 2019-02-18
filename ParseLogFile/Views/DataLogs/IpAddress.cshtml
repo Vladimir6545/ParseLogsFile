@@ -1,0 +1,38 @@
+﻿
+@model IEnumerable<ParseLogFile.Models.ViewsModels.ListIP>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            IP
+        </th>
+        <th>
+            Company
+        </th>
+        <th>
+            Nomination network
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IP)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NominationNetwork)
+            </td>
+        </tr>
+    }
+</table>
+

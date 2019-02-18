@@ -1,0 +1,131 @@
+﻿@model IEnumerable<ParseLogFile.Models.ViewsModels.LogsViewModel>
+
+<style>
+    #myProgress {
+        width: 100%;
+    }
+
+    #myBar {
+        width: 0%;
+        height: 30px;
+        background-color: #4CAF50;
+    }
+</style>
+
+<br />
+<form id="uploader">
+    <input id="fileInput" type="file" multiple>
+    <br />
+    <input type="submit" value="Upload file"/>
+</form>
+<br />
+
+<div id="myProgress">
+    <div id="myBar"></div>
+</div>
+
+<br />
+<table class="table">
+    <tr>
+        <th>
+            дата запроса
+        </th>
+        <th>
+            время запроса
+        </th>
+        <th>
+            тип запроса
+        </th>
+        <th>
+            Hаименование запрошенноо файла
+        </th>
+        <th>
+            путь к запрашиваемому файлу
+        </th>
+        <th>
+            IP адрес, с которого был запрос
+        </th>
+        <th>
+            наименование сети, которой принадлежит этот IP 
+        </th>
+        <th>
+            объем переданных байт
+        </th>
+        <th>
+            результат запроса
+        </th>
+    </tr>
+
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TypeRequest)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.descriptionFile.NominationFile)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.descriptionFile.PathToFile)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ip.IP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ip.NominationNetwork)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TransmittedBytes)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RezultRequest)
+                </td>
+            </tr>
+        }
+    }
+</table>
+
+
+
+<script>
+    document.getElementById('uploader').onsubmit = function () {
+        var formdata = new FormData(); 
+        var fileInput = document.getElementById('fileInput');
+        for (i = 0; i < fileInput.files.length; i++) {
+            formdata.append(fileInput.files[i].name, fileInput.files[i]);
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/DataLogs/Upload');
+        xhr.send(formdata);
+        move();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                alert(xhr.responseText);
+                window.location.href = '/DataLogs/Index/';
+            }
+        }
+        return false;
+    }
+
+    function move() {
+        var elem = document.getElementById("myBar");
+        var width = 1;
+        var id = setInterval(frame, 100);
+        function frame() {
+            if (width >= 1000) {
+                clearInterval(id);
+            } else {
+                width++;
+                elem.style.width = width + '%';
+            }
+        }
+    }
+</script>
