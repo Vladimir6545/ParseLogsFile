@@ -64,3 +64,6 @@ C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFil
 C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\obj\Debug\ParseLogFile.csproj.GenerateResource.Cache
 C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\obj\Debug\ParseLogFile.Migrations.changedateTimetostringinDataLog.resources
 C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\obj\Debug\ParseLogFile.Migrations.addnominationpageinfile.resources
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\HtmlAgilityPack.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\HtmlAgilityPack.pdb
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\HtmlAgilityPack.xml
