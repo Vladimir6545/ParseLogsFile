@@ -120,7 +120,82 @@ namespace ParseLogFile.Repositories
             using (var db = ApplicationDbContext.Create())
             {
                 IQueryable<DataLog> logs = db.DataLogs.Include("Company").Include("File");
+                logs = logs.OrderByDescending(s => s.Company.IP);
                 _dataLogs = logs.ToList();
+                _data = new List<LogsViewModel>();
+                foreach (var item in _dataLogs)
+                {
+                    var log = new LogsViewModel();
+                    log.Date = item.DateRequest;
+                    log.Time = item.TimeRequest;
+                    log.TypeRequest = item.TypeRequest;
+                    log.descriptionFile.NominationFile = item.File.Name;
+                    log.descriptionFile.PathToFile = item.File.Path;
+                    log.ip.IP = item.Company.IP;
+                    log.ip.NominationNetwork = item.Company.NominationNetwork;
+                    log.TransmittedBytes = item.File.Size;
+                    log.RezultRequest = item.RezultRequest.ToString();
+                    _data.Add(log);
+                }
+                if (_data != null)
+                {
+                    return _data;
+                }
+                return null;
+            }
+        }
+
+        public List<LogsViewModel> GetDataLogs(string sort)
+        {
+            using (var db = ApplicationDbContext.Create())
+            {
+                IQueryable<DataLog> logs = db.DataLogs.Include("Company").Include("File");
+
+                switch (sort)
+                {
+                    case "Date":
+                        logs = logs.OrderBy(l => l.DateRequest);
+                        break;
+                    case "DateDesc":
+                        logs = logs.OrderByDescending(l => l.DateRequest);
+                        break;
+                    case "IP":
+                        logs = logs.OrderBy(l => l.Company.IP); 
+                        break;
+                    case "IPDesc":
+                        logs = logs.OrderByDescending(l => l.Company.IP);
+                        break;
+                    case "Time":
+                        logs = logs.OrderBy(l => l.TimeRequest);
+                        break;
+                    case "TimeDesc":
+                        logs = logs.OrderByDescending(l => l.TimeRequest);
+                        break;
+                    case "Network":
+                        logs = logs.OrderBy(l => l.Company.NominationNetwork);
+                        break;
+                    case "NetworkDesc":
+                        logs = logs.OrderByDescending(l => l.Company.NominationNetwork);
+                        break;
+                    case "Size":
+                        logs = logs.OrderBy(l => l.File.Size);
+                        break;
+                    case "SizeDesc":
+                        logs = logs.OrderByDescending(l => l.File.Size);
+                        break;
+                    case "Rezult":
+                        logs = logs.OrderBy(l => l.RezultRequest);
+                        break;
+                    case "RezultDesc":
+                        logs = logs.OrderByDescending(l => l.RezultRequest);
+                        break;
+                    default:
+                        logs = logs.OrderBy(l => l.Id); 
+                        break;
+                }
+
+                
+                 _dataLogs = logs.ToList();
                 _data = new List<LogsViewModel>();
                 foreach (var item in _dataLogs)
                 {

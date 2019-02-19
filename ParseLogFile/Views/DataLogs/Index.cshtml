@@ -1,5 +1,6 @@
-﻿@model IEnumerable<ParseLogFile.Models.ViewsModels.LogsViewModel>
-
+﻿@model PagedList.IPagedList<ParseLogFile.Models.ViewsModels.LogsViewModel>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 <style>
     #myProgress {
         width: 100%;
@@ -16,8 +17,18 @@
 <form id="uploader">
     <input id="fileInput" type="file" multiple>
     <br />
-    <input type="submit" value="Upload file"/>
+    <input type="submit" value="Upload file" />
 </form>
+<br />
+
+@using (Html.BeginForm())
+{
+    <p>
+        Find by IP or name file: @Html.TextBox("Search", ViewBag.CurrentFilter as string)
+        <input type="submit" value="search" />
+    </p>
+}
+
 <br />
 
 <div id="myProgress">
@@ -28,31 +39,31 @@
 <table class="table">
     <tr>
         <th>
-            дата запроса
+            @Html.ActionLink("дата запроса", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            время запроса
+            @Html.ActionLink("время запроса", "Index", new { sortOrder = ViewBag.TimeSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
             тип запроса
         </th>
         <th>
-            Hаименование запрошенноо файла
+            Hаименование запрошенного файла
         </th>
         <th>
             путь к запрашиваемому файлу
         </th>
         <th>
-            IP адрес, с которого был запрос
+            @Html.ActionLink("IP адрес, с которого был запрос", "Index", new { sortOrder = ViewBag.IPSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            наименование сети, которой принадлежит этот IP 
+            @Html.ActionLink("наименование сети, которой принадлежит этот IP", "Index", new { sortOrder = ViewBag.NetworkSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            объем переданных байт
+            @Html.ActionLink("объем переданных байт", "Index", new { sortOrder = ViewBag.SizeSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            результат запроса
+            @Html.ActionLink("результат запроса", "Index", new { sortOrder = ViewBag.RezultSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
     </tr>
 
@@ -93,11 +104,16 @@
     }
 </table>
 
-
+<br />
+<div id='Paging' style="text-align:center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
 
 <script>
     document.getElementById('uploader').onsubmit = function () {
-        var formdata = new FormData(); 
+        var formdata = new FormData();
         var fileInput = document.getElementById('fileInput');
         for (i = 0; i < fileInput.files.length; i++) {
             formdata.append(fileInput.files[i].name, fileInput.files[i]);
@@ -120,7 +136,7 @@
         var width = 1;
         var id = setInterval(frame, 100);
         function frame() {
-            if (width >= 1000) {
+            if (width >= 700) {
                 clearInterval(id);
             } else {
                 width++;

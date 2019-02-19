@@ -1,38 +1,61 @@
-﻿
-@model IEnumerable<ParseLogFile.Models.ViewsModels.ListIP>
-
-@{
-    ViewBag.Title = "Index";
+﻿@model PagedList.IPagedList<ParseLogFile.Models.ViewsModels.ListIP>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<br/>
+@using (Html.BeginForm())
+{
+    <p>
+        Find by IP or name company or nomination network : @Html.TextBox("Search", ViewBag.CurrentFilter as string)
+        <input type="submit" value="search" />
+    </p>
 }
 
-<h2>Index</h2>
+<br />
+
 
 <table class="table">
     <tr>
         <th>
-            IP
+            @Html.ActionLink("IP", "IpAddress", new { sortOrder = ViewBag.IPSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
+        @*<th>
+                IP
+            </th>*@
         <th>
-            Company
+            @Html.ActionLink("Company", "IpAddress", new { sortOrder = ViewBag.CompanySortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
+        @*<th>
+                Company
+            </th>*@
         <th>
-            Nomination network
+            @Html.ActionLink("Nomination network", "IpAddress", new { sortOrder = ViewBag.NetworkSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
+        @*<th>
+                Nomination network
+            </th>*@
     </tr>
 
-    @foreach (var item in Model)
+    @if (Model != null)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.IP)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CompanyName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NominationNetwork)
-            </td>
-        </tr>
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NominationNetwork)
+                </td>
+            </tr>
+        }
     }
 </table>
 
+<div id='Paging' style="text-align:center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("IpAddress",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>

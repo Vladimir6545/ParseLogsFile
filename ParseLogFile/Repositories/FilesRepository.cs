@@ -1,4 +1,5 @@
 ﻿using ParseLogFile.Helpers;
+using ParseLogFile.Models;
 using ParseLogFile.Models.ViewsModels;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,31 @@ namespace ParseLogFile.Repositories
 {
     public class FilesRepository
     {
-        public List<DescriptionFile> GetFiles()
+        public List<DescriptionFile> GetFiles(string sort)
         {
             using (var db = ApplicationDbContext.Create())
             {
-                var dataIP = db.Files;
+                IQueryable<File> dataIP = db.Files;
+
+                switch (sort)
+                {
+                    case "Name":
+                        dataIP = dataIP.OrderBy(l => l.Name);
+                        break;
+                    case "NameDesc":
+                        dataIP = dataIP.OrderByDescending(l => l.Name);
+                        break;
+                    case "Page":
+                        dataIP = dataIP.OrderBy(l => l.NominationPage);
+                        break;
+                    case "PageDesc":
+                        dataIP = dataIP.OrderByDescending(l => l.NominationPage);
+                        break;
+                    default:
+                        dataIP = dataIP.OrderBy(l => l.Id);
+                        break;
+                }
+
                 var listIP = dataIP.ToList();
                 if (listIP != null)
                 {

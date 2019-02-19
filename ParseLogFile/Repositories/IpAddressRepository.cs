@@ -1,4 +1,5 @@
 ﻿using ParseLogFile.Helpers;
+using ParseLogFile.Models;
 using ParseLogFile.Models.ViewsModels;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,37 @@ namespace ParseLogFile.Repositories
 {
     public class IpAddressRepository
     {
-        public List<ListIP> GetIP()
+        public List<ListIP> GetIP(string sort)
         {
             using (var db = ApplicationDbContext.Create())
             {
-                var dataLogs = db.Companies;
+                IQueryable<Company> dataLogs = db.Companies;
+
+                switch (sort)
+                {
+                    case "IP":
+                        dataLogs = dataLogs.OrderBy(l => l.IP);
+                        break;
+                    case "IPDesc":
+                        dataLogs = dataLogs.OrderByDescending(l => l.IP);
+                        break;
+                    case "Company":
+                        dataLogs = dataLogs.OrderBy(l => l.Name);
+                        break;
+                    case "CompanyDesc":
+                        dataLogs = dataLogs.OrderByDescending(l => l.Name);
+                        break;
+                    case "Network":
+                        dataLogs = dataLogs.OrderBy(l => l.NominationNetwork);
+                        break;
+                    case "NetworkDesc":
+                        dataLogs = dataLogs.OrderByDescending(l => l.NominationNetwork);
+                        break;
+                    default:
+                        dataLogs = dataLogs.OrderBy(l => l.Id);
+                        break;
+                }
+
                 var temp = dataLogs.ToList();
                 var ip = new List<ListIP>();
                 if (ip != null)

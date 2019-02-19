@@ -67,3 +67,7 @@ C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFil
 C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\HtmlAgilityPack.dll
 C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\HtmlAgilityPack.pdb
 C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\HtmlAgilityPack.xml
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\PagedList.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\PagedList.Mvc.dll
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\PagedList.xml
+C:\Users\Vladimir\documents\visual studio 2015\Projects\ParseLogFile\ParseLogFile\bin\PagedList.Mvc.xml

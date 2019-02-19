@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
+﻿using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
-using ParseLogFile.Helpers;
-using ParseLogFile.Models;
 using ParseLogFile.Models.ViewsModels;
-using Whois.NET;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Net.Http;
-using System.Xml;
-using System.Xml.Linq;
-using HtmlAgilityPack;
 using ParseLogFile.Repositories;
-using System.Threading.Tasks;
+using PagedList;
+using System;
+using System.Linq;
 
 namespace ParseLogFile.Controllers
 {
@@ -35,32 +22,112 @@ namespace ParseLogFile.Controllers
             _fileRepo = new FilesRepository();
         }
         // GET: DataLogs
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string currentFilter, string search, int? page)
         {
-            List<LogsViewModel> dataView = _dataLogRepo.GetDataLogs();
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.IPSortParam = sortOrder == "IP" ? "IPDesc" : "IP";
+            ViewBag.DateSortParam = sortOrder == "Date" ? "DateDesc" : "Date";
+            ViewBag.TimeSortParam = sortOrder == "Time" ? "TimeDesc" : "Time";
+            ViewBag.NetworkSortParam = sortOrder == "Network" ? "NetworkDesc" : "Network";
+            ViewBag.SizeSortParam = sortOrder == "Size" ? "SizeDesc" : "Size";
+            ViewBag.RezultSortParam = sortOrder == "Rezult" ? "RezultDesc" : "Rezult";
+
+            List<LogsViewModel> dataView = _dataLogRepo.GetDataLogs(sortOrder);
+
+            if (search != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                search = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = search;
+
+            if (!String.IsNullOrEmpty(search))
+            {
+               dataView = dataView.Where(d => d.ip.IP == search|| d.descriptionFile.NominationFile == search).ToList();
+            }
+
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
+
             if (dataView != null)
             {
-                return View(dataView);
+                return View(dataView.ToPagedList(pageNumber, pageSize));
             }
             return View();
         }
 
-        public ActionResult IpAddress()
+        public ActionResult IpAddress(string sortOrder, string currentFilter, string search, int? page)
         {
-            List<ListIP> ipView = _ipRepo.GetIP();
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.IPSortParam = sortOrder == "IP" ? "IPDesc" : "IP";
+            ViewBag.CompanySortParam = sortOrder == "Company" ? "CompanyDesc" : "Company";
+            ViewBag.NetworkSortParam = sortOrder == "Network" ? "NetworkDesc" : "Network";
+
+            if (search != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                search = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = search;
+
+            List<ListIP> ipView = _ipRepo.GetIP(sortOrder);
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                ipView = ipView.Where(d => d.IP == search 
+                               || d.CompanyName == search
+                               || d.NominationNetwork == search).ToList();
+            }
+
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
+
             if (ipView != null)
             {
-                return View(ipView);
+                return View(ipView.ToPagedList(pageNumber, pageSize));
             }
             return View();
         }
 
-        public ActionResult Files()
+        public ActionResult Files(string sortOrder, string currentFilter, string search, int? page)
         {
-            List<DescriptionFile> files = _fileRepo.GetFiles();
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParam = sortOrder == "Name" ? "NameDesc" : "Name";
+            ViewBag.PageSortParam = sortOrder == "Page" ? "PageDesc" : "Page";
+
+            if (search != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                search = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = search;
+
+            List<DescriptionFile> files = _fileRepo.GetFiles(sortOrder);
+
+            if (!String.IsNullOrEmpty(search))
+            {
+                files = files.Where(d => d.Name == search
+                               || d.NominationPage == search).ToList();
+            }
+
+            int pageSize = 7;
+            int pageNumber = (page ?? 1);
+
             if (files != null)
             {
-                return View(files);
+                return View(files.ToPagedList(pageNumber, pageSize));
             }
             return View();
         }

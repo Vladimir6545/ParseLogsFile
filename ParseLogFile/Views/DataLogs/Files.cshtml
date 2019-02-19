@@ -1,32 +1,54 @@
-﻿@model IEnumerable<ParseLogFile.Models.ViewsModels.DescriptionFile>
+﻿@model PagedList.IPagedList<ParseLogFile.Models.ViewsModels.DescriptionFile>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+<br />
+@using (Html.BeginForm())
+{
+    <p>
+        Find by name or nomination page : @Html.TextBox("Search", ViewBag.CurrentFilter as string)
+        <input type="submit" value="search" />
+    </p>
+}
+
+<br />
 
 <table class="table">
     <tr>
         <th>
-            Name
+            @Html.ActionLink("Name", "Files", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
             Path 
         </th>
         <th>
-            Nomination page
+            @Html.ActionLink("Nomination page", "Files", new { sortOrder = ViewBag.PageSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
     </tr>
 
-    @foreach (var item in Model)
+    @if (Model != null)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PathToFile)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NominationPage)
-            </td>
-        </tr>
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PathToFile)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NominationPage)
+                </td>
+            </tr>
+        }
     }
+   
 </table>
+<br/>
+<div id='Paging' style="text-align:center">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action("Files",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
 
 
