@@ -19,7 +19,15 @@
     <br />
     <input type="submit" value="Upload file" />
 </form>
-<br />
+
+<div style="text-align:right">
+    @using (Html.BeginForm("ClearData", "DataLogs", FormMethod.Get))
+    {
+        <p>
+            <input type="submit" value="Clear data" />
+        </p>
+    }
+</div>
 
 @using (Html.BeginForm())
 {
@@ -28,7 +36,6 @@
         <input type="submit" value="search" />
     </p>
 }
-
 <br />
 
 <div id="myProgress">
@@ -39,31 +46,31 @@
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("дата запроса", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Date request", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("время запроса", "Index", new { sortOrder = ViewBag.TimeSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Time request", "Index", new { sortOrder = ViewBag.TimeSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            тип запроса
+            Type request
         </th>
         <th>
-            Hаименование запрошенного файла
+            Name of the requested file
         </th>
         <th>
-            путь к запрашиваемому файлу
+            Path to the requested file
         </th>
         <th>
-            @Html.ActionLink("IP адрес, с которого был запрос", "Index", new { sortOrder = ViewBag.IPSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("IP address from which the request was made", "Index", new { sortOrder = ViewBag.IPSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("наименование сети, которой принадлежит этот IP", "Index", new { sortOrder = ViewBag.NetworkSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Name of the network that owns this IP", "Index", new { sortOrder = ViewBag.NetworkSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("объем переданных байт", "Index", new { sortOrder = ViewBag.SizeSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Transmitted bytes", "Index", new { sortOrder = ViewBag.SizeSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("результат запроса", "Index", new { sortOrder = ViewBag.RezultSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Request result", "Index", new { sortOrder = ViewBag.RezultSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
     </tr>
 

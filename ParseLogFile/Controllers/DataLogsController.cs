@@ -47,7 +47,7 @@ namespace ParseLogFile.Controllers
 
             if (!String.IsNullOrEmpty(search))
             {
-               dataView = dataView.Where(d => d.ip.IP == search|| d.descriptionFile.NominationFile == search).ToList();
+                dataView = dataView.Where(d => d.ip.IP == search || d.descriptionFile.NominationFile == search).ToList();
             }
 
             int pageSize = 7;
@@ -82,7 +82,7 @@ namespace ParseLogFile.Controllers
 
             if (!String.IsNullOrEmpty(search))
             {
-                ipView = ipView.Where(d => d.IP == search 
+                ipView = ipView.Where(d => d.IP == search
                                || d.CompanyName == search
                                || d.NominationNetwork == search).ToList();
             }
@@ -104,13 +104,13 @@ namespace ParseLogFile.Controllers
             ViewBag.PageSortParam = sortOrder == "Page" ? "PageDesc" : "Page";
 
             if (search != null)
-            {
-                page = 1;
-            }
+              {
+                  page = 1;
+              }
             else
-            {
-                search = currentFilter;
-            }
+              {
+                 search = currentFilter;
+              }
 
             ViewBag.CurrentFilter = search;
 
@@ -146,6 +146,13 @@ namespace ParseLogFile.Controllers
                 _dataLogRepo.SaveToDatabase();
             }
             return Json("Uploaded " + Request.Files.Count + " files");
+        }
+
+        [HttpGet]
+        public ActionResult ClearData()
+        {
+            _dataLogRepo.ClearData();
+            return Redirect("Index");
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-
-using System.Linq;
-using System.Web;
-
+﻿
 namespace ParseLogFile.Models
 {
     public class DataLog

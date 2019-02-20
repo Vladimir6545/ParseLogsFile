@@ -72,77 +72,97 @@ namespace ParseLogFile.Repositories
             }
             return null;
         }
+
+        private bool IsNumberContains(string input)
+        {
+            if (!String.IsNullOrEmpty(input) && input.Length < 16 && input.Length > 6)
+            {
+                int _count = 0;
+                foreach (char c in input)
+                    if (Char.IsNumber(c))
+                    {
+                        _count++;
+                        if (_count > 5)
+                            return true;
+                    }
+            }
+            return false;
+        }
         public void SaveToDatabase()
         {
-            using (var db = ApplicationDbContext.Create())
+            try
             {
-                string path = HttpContext.Current.Server.MapPath("~/Files/");
-                var filename = new DirectoryInfo(path).GetFiles();
-                string[] readText = System.IO.File.ReadAllLines(path + filename[0].Name);
-
-                for (int i = 0; i < readText.Length; i++)
+                using (var db = ApplicationDbContext.Create())
                 {
-                    string[] words = readText[i].Split(' ');
-                    words[3] = Regex.Replace(words[3], @"\[", " ");
-                    string date = words[3].Remove(words[3].IndexOf(":"));
-                    string time = words[3].Substring(words[3].IndexOf(":") + 1);
-                    int indexPath = words[6].LastIndexOf('/');
+                    string path = HttpContext.Current.Server.MapPath("~/Files/");
+                    var filename = new DirectoryInfo(path).GetFiles();
+                    string[] readText = System.IO.File.ReadAllLines(path + filename[0].Name);
 
-                    DataLog data = new DataLog
+                    for (int i = 0; i < readText.Length; i++)
                     {
-                        DateRequest = date,
-                        TimeRequest = time,
-                        TypeRequest = words[5].Replace('"', ' '),
-                        RezultRequest = int.Parse(words[8]),
-                        Company = new Company
+                        string[] words = readText[i].Split(' ');
+                        if (IsNumberContains(words[0]))
                         {
-                            IP = words[0],
-                            Name = GetWhoisCompanyName(words[0]),
-                            NominationNetwork = GetWhoisNominationNetwork(words[0])
-                        },
-                        File = new Models.File
-                        {
-                            Name = filename[0].Name,
-                            Path = words[6],//.Substring(0, indexPath + 1),
-                            NominationPage = GetTextFromTitleTag(words[6]),
-                            Size = words[9] + " b"
+                            words[3] = Regex.Replace(words[3], @"\[", " ");
+                            string date = words[3].Remove(words[3].IndexOf(":"));
+                            string time = words[3].Substring(words[3].IndexOf(":") + 1);
+                            int indexPath = words[6].LastIndexOf('/');
+
+                            DataLog data = new DataLog
+                            {
+                                DateRequest = date,
+                                TimeRequest = time,
+                                TypeRequest = words[5].Replace('"', ' '),
+                                RezultRequest = int.Parse(words[8]),
+                                Company = new Company
+                                {
+                                    IP = words[0],
+                                    Name = GetWhoisCompanyName(words[0]),
+                                    NominationNetwork = GetWhoisNominationNetwork(words[0])
+                                },
+                                File = new Models.File
+                                {
+                                    Name = filename[0].Name,
+                                    Path = words[6],//.Substring(0, indexPath + 1),
+                                    NominationPage = GetTextFromTitleTag(words[6]),
+                                    Size = words[9] + " b"
+                                }
+
+                            };
+                            db.DataLogs.Add(data);
                         }
-
-                    };
-                    db.DataLogs.Add(data);
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    db.SaveChanges();
                 }
+                DeleteFile();
 
-                db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                
             }
         }
-        public List<LogsViewModel> GetDataLogs()
+
+        private string DeleteFile()
         {
-            using (var db = ApplicationDbContext.Create())
+            try
             {
-                IQueryable<DataLog> logs = db.DataLogs.Include("Company").Include("File");
-                logs = logs.OrderByDescending(s => s.Company.IP);
-                _dataLogs = logs.ToList();
-                _data = new List<LogsViewModel>();
-                foreach (var item in _dataLogs)
+                string path = HttpContext.Current.Server.MapPath("~/Files/");
+                var filenames = new DirectoryInfo(path).GetFiles();
+                foreach (FileInfo file in filenames)
                 {
-                    var log = new LogsViewModel();
-                    log.Date = item.DateRequest;
-                    log.Time = item.TimeRequest;
-                    log.TypeRequest = item.TypeRequest;
-                    log.descriptionFile.NominationFile = item.File.Name;
-                    log.descriptionFile.PathToFile = item.File.Path;
-                    log.ip.IP = item.Company.IP;
-                    log.ip.NominationNetwork = item.Company.NominationNetwork;
-                    log.TransmittedBytes = item.File.Size;
-                    log.RezultRequest = item.RezultRequest.ToString();
-                    _data.Add(log);
+                    file.Delete();
                 }
-                if (_data != null)
-                {
-                    return _data;
-                }
-                return null;
             }
+            catch (Exception ex)
+            {
+                return "Delete files " + ex.Message;
+            }
+            return "Delete all files";
         }
 
         public List<LogsViewModel> GetDataLogs(string sort)
@@ -160,7 +180,7 @@ namespace ParseLogFile.Repositories
                         logs = logs.OrderByDescending(l => l.DateRequest);
                         break;
                     case "IP":
-                        logs = logs.OrderBy(l => l.Company.IP); 
+                        logs = logs.OrderBy(l => l.Company.IP);
                         break;
                     case "IPDesc":
                         logs = logs.OrderByDescending(l => l.Company.IP);
@@ -190,12 +210,12 @@ namespace ParseLogFile.Repositories
                         logs = logs.OrderByDescending(l => l.RezultRequest);
                         break;
                     default:
-                        logs = logs.OrderBy(l => l.Id); 
+                        logs = logs.OrderBy(l => l.Id);
                         break;
                 }
 
-                
-                 _dataLogs = logs.ToList();
+
+                _dataLogs = logs.ToList();
                 _data = new List<LogsViewModel>();
                 foreach (var item in _dataLogs)
                 {
@@ -216,6 +236,16 @@ namespace ParseLogFile.Repositories
                     return _data;
                 }
                 return null;
+            }
+        }
+
+        public void ClearData()
+        {
+            using (var db = ApplicationDbContext.Create())
+            {
+                db.Database.ExecuteSqlCommand("Delete from Companies");
+                db.Database.ExecuteSqlCommand("Delete from Files");
+                db.Database.ExecuteSqlCommand("Delete from DataLogs"); ;
             }
         }
     }
